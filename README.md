@@ -11,12 +11,12 @@ installed on your system (host-computer).
 
 1. Clone the docker eudaq repository and configure it
 ```bash 
-$ git clone https://github.com/duartej/dockerfiles.git 
-$ cd dockerfiles/eudaq
+$ git clone https://github.com/duartej/dockerfiles-eudaqv1
+$ cd dockerfiles-eudaqv1
 $ source setup.sh
 ```
-The ```setup.sh``` script will create some ```Dockerfile```
-and some ```docker-compose*.yml``` files. It also creates
+The ```setup.sh``` script will create 
+some ```docker-compose*.yml``` files. It also creates
 the directories ```$HOME/eudaq_data/logs``` and 
 ```$HOME/eudaq_data/data```, where logs and raw data will
 be sent in the host computer.
@@ -34,8 +34,8 @@ or alternativelly you can build an image from the
 [Dockerfile](Dockerfile)
 ```bash
 # Using docker
-$ docker build -t="duartej/eudaqv1-ubuntu" github.com/duartej/eudaq
-# Using docker-compose
+$ docker build github.com/duartej/eudaq
+# Using docker-compose within the repo directory
 $ docker-compose build eudaqv1-ubuntu
 ```
 ## Usage: production environment
