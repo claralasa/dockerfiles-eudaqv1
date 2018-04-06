@@ -1,0 +1,34 @@
+version: "3.2"
+
+services:
+    NIProducer:
+        image: duartej/eudaqv1-ubuntu
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+        environment:
+            - DISPLAY=unix${DISPLAY}
+        depends_on:
+            - "runControl"
+            - "logger"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.6
+        entrypoint: 
+            - initialize_service.sh
+            - NIProducer
+
+    TLU:
+        image: duartej/eudaqv1-ubuntu
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+        environment:
+            - DISPLAY=unix${DISPLAY}
+        depends_on:
+            - "runControl"
+            - "NIProducer"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.7
+        entrypoint: 
+            - initialize_service.sh
+            - TLU
