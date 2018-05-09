@@ -68,7 +68,7 @@ RUN cd /eudaq/eudaq \
   && tar xzf extern/tlufirmware.tar.gz -C extern && rm extern/tlufirmware.tar.gz \
   && mkdir -p build \ 
   && cd build \ 
-  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON \ 
+  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON \ 
   && make -j4 install
 # STOP ONLY FOR PRODUCTION
 
