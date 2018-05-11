@@ -87,6 +87,7 @@ ENV PATH="${PATH}:/rootfr/root/bin:/eudaq/eudaq/bin"
 COPY initialize_service.sh /usr/bin/initialize_service.sh
 
 # ILCSOFT (for EUTelescope) and LCIO ===================
+ENV ILCSOFT /eudaq/ilcsoft
 ENV EUTELESCOPE ${ILCSOFT}/v01-19-02/Eutelescope/master/
 ENV EUDAQ /eudaq/eudaq
 ENV ILCSOFT_CMAKE_ENV ${ILCSOFT}/v01-19-02/ILCSoft.cmake.env.sh
@@ -104,12 +105,12 @@ COPY release-standalone-tuned.cfg ${ILCSOFT}/release-standalone-tuned.cfg
 # ILCSOFT compilation
 RUN mkdir -p ${ILCSOFT} \
   && git clone -b dev-base https://github.com/eutelescope/ilcinstall $ILCSOFT/ilcinstall \
-  && cd $ILCSOFT/ilcinstall \
-  && $ILCSOFT/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg \ 
+  && cd ${ILCSOFT}/ilcinstall \
+  && ${ILCSOFT}/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg \ 
   && mkdir -p ${EUTELESCOPE}/build && cd ${EUTELESCOPE}/build \ 
   && cmake .. \ 
   && make -j4 install \
-  && /bin/bash -c "source ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh"
+  && . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh
 # ILCSOFT (for EUTelescope) and LCIO: DONE ===================
 
 # Recompile eudaq with lcio and eutelescope

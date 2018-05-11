@@ -3,7 +3,8 @@
 Creates the environment to run the EUDAQ framework. 
 This image is based on an ubuntu-16.04 and contains
 the necessary packages to run (or develop) the EUDAQ
-framework in a real test-beam setup
+framework in a real test-beam setup, included EUTelescope
+and LCIO.
 
 ## Installation
 Assuming ```docker``` and ```docker-compose``` is 
@@ -28,13 +29,13 @@ mode.
 
 2. Download the automated build from the dockerhub: 
 ```bash
-$ docker pull duartej/eudaqv1-ubuntu
+$ docker pull duartej/eudaqv1-ubuntu:eutelescope
 ```
 or alternativelly you can build an image from the
 [Dockerfile](Dockerfile)
 ```bash
 # Using docker
-$ docker build github.com/duartej/eudaq
+$ docker build github.com/duartej/eudaqv1-ubuntu:eutelescope
 # Using docker-compose within the repo directory
 $ docker-compose build eudaqv1-ubuntu
 ```
