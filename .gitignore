@@ -2,4 +2,5 @@
 .setupdone
 docker-compose*
 production.yml
+.*.swp
 

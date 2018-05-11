@@ -35,6 +35,14 @@ RUN apt-get update && apt-get -y install \
   libxpm4 \ 
   libxft2 \ 
   libtiff5 \ 
+  libeigen3-dev \ 
+  default-jdk \ 
+  libgsl-dev \ 
+  libxpm-dev \ 
+  libxft-dev \ 
+  libx11-dev \ 
+  libxext-dev \
+  subversion \ 
   && rm -rf /var/lib/apt/lists/*
 
 # ROOT 
@@ -78,9 +86,42 @@ ENV PATH="${PATH}:/rootfr/root/bin:/eudaq/eudaq/bin"
 
 COPY initialize_service.sh /usr/bin/initialize_service.sh
 
+# ILCSOFT (for EUTelescope) and LCIO ===================
+ENV EUTELESCOPE ${ILCSOFT}/v01-19-02/Eutelescope/master/
+ENV EUDAQ /eudaq/eudaq
+ENV ILCSOFT_CMAKE_ENV ${ILCSOFT}/v01-19-02/ILCSoft.cmake.env.sh
+ENV MILLEPEDEII ${ILCSOFT}/v01-19-02/Eutelescope/master/external/millepede2/tags/V04-03-03
+ENV MILLEPEDEII_VERSION tags/V04-03-03
+ENV GEAR ${ILCOSFT}/v01-19-02/gear/v01-06-eutel-pre
+ENV MARLIN ${ILCSOFT}/v01-19-02/Marlin/v01-09
+ENV MARLIN_DLL ${EUTELESCOPE}/lib/libEutelescope.so:${EUTELESCOPE}/lib/libEutelProcessors.so:${EUTELESCOPE}/lib/libEutelReaders.so:${EUDAQ}/lib/libNativeReader.so:${MARLIN_DLL}
+ENV GBL ${ILCSOFT}/v01-19-02/GBL/V02-01-02
+ENV PATH="${PATH}:${MARLIN}/bin:${MILLEPEDEII}:${EUTELESCOPE}/bin:${GEAR}/tools:${GEAR}/bin"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${EUTELESCOPE}/lib:${GEAR}/lib:${GBL}/lib"
+
+COPY release-standalone-tuned.cfg ${ILCSOFT}/release-standalone-tuned.cfg
+
+# ILCSOFT compilation
+RUN mkdir -p ${ILCSOFT} \
+  && git clone -b dev-base https://github.com/eutelescope/ilcinstall $ILCSOFT/ilcinstall \
+  && cd $ILCSOFT/ilcinstall \
+  && $ILCSOFT/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg \ 
+  && mkdir -p ${EUTELESCOPE}/build && cd ${EUTELESCOPE}/build \ 
+  && cmake .. \ 
+  && make -j4 install \
+  && /bin/bash -c "source ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh"
+# ILCSOFT (for EUTelescope) and LCIO: DONE ===================
+
+# Recompile eudaq with lcio and eutelescope
+RUN cd /eudaq/eudaq/build \ 
+  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON -DUSE_LCIO=ON -DBUILD_nreader=ON \ 
+  && make -j4 install
+
 # Create a couple of directories needed
 RUN mkdir -p /logs && mkdir -p /data
 RUN useradd -md /home/eudaquser -ms /bin/bash eudaquser
-RUN chown -R eudaquser:eudaquser /logs && chown -R eudaquser:eudaquser /data 
+RUN chown -R eudaquser:eudaquser /logs && chown -R eudaquser:eudaquser /data \
+  && chown -R eudaquser:eudaquser /eudaq
+  #&& chown -R eudaquser:eudaquser ${ILCSOFT} && chown -R eudaquser:eudaquser /eudaq/eudaq
 USER eudaquser
 

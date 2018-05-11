@@ -3,10 +3,10 @@ version: "3.2"
 services:
     eudaqv1-ubuntu:
         build: .
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
     
     runControl:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
         environment:
@@ -21,7 +21,7 @@ services:
             - runControl
     
     logger:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -39,7 +39,7 @@ services:
             - logger
 
     dataCollector:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -58,7 +58,7 @@ services:
             - dataCollector
 
     onlineMon:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind

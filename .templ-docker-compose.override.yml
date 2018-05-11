@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
     devcode:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -38,7 +38,7 @@ services:
               target: /eudaq/eudaq
     
     TestProducer:
-        image: duartej/eudaqv1-ubuntu
+        image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
