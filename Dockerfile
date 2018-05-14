@@ -109,12 +109,12 @@ RUN mkdir -p ${ILCSOFT} \
   && ${ILCSOFT}/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg \ 
   && mkdir -p ${EUTELESCOPE}/build && cd ${EUTELESCOPE}/build \ 
   && cmake .. \ 
-  && make -j4 install \
-  && . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh
+  && make -j4 install 
 # ILCSOFT (for EUTelescope) and LCIO: DONE ===================
 
 # Recompile eudaq with lcio and eutelescope
-RUN cd /eudaq/eudaq/build \ 
+RUN . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh \
+  && cd /eudaq/eudaq/build \ 
   && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON -DUSE_LCIO=ON -DBUILD_nreader=ON \ 
   && make -j4 install
 
@@ -126,3 +126,4 @@ RUN chown -R eudaquser:eudaquser /logs && chown -R eudaquser:eudaquser /data \
   #&& chown -R eudaquser:eudaquser ${ILCSOFT} && chown -R eudaquser:eudaquser /eudaq/eudaq
 USER eudaquser
 
+ENTRYPOINT . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh && /bin/bash -i
