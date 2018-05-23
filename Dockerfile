@@ -23,9 +23,7 @@ RUN apt-get update && apt-get -y install \
   libusb-dev \ 
   pkgconf \ 
   python \ 
-  python3 \ 
   python-dev \ 
-  python3-dev \
   python-numpy \ 
   vim \ 
   g++ \
@@ -43,6 +41,7 @@ RUN apt-get update && apt-get -y install \
   libx11-dev \ 
   libxext-dev \
   subversion \ 
+  sudo \ 
   && rm -rf /var/lib/apt/lists/*
 
 # ROOT 
@@ -120,7 +119,11 @@ RUN . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh \
 
 # Create a couple of directories needed
 RUN mkdir -p /logs && mkdir -p /data
-RUN useradd -md /home/eudaquser -ms /bin/bash eudaquser
+# Add eudaquser, allow to call sudo without password
+RUN useradd -md /home/eudaquser -ms /bin/bash -G sudo eudaquser \ 
+  && echo "eudaquser:docker" | chpasswd \
+  && echo "eudaquser ALL=(ALL) NOPASSWD: ALL\n" >> /etc/sudoers 
+# Give previously created folders ownership to the user
 RUN chown -R eudaquser:eudaquser /logs && chown -R eudaquser:eudaquser /data \
   && chown -R eudaquser:eudaquser /eudaq
   #&& chown -R eudaquser:eudaquser ${ILCSOFT} && chown -R eudaquser:eudaquser /eudaq/eudaq

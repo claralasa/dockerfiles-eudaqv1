@@ -21,11 +21,11 @@ services:
         image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
+            - /dev/bus/usb:/dev/bus/usb
         environment:
             - DISPLAY=unix${DISPLAY}
         depends_on:
             - "runControl"
-            - "NIProducer"
         networks:
             static_network:
                 ipv4_address: 172.20.128.7
