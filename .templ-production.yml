@@ -22,6 +22,7 @@ services:
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /dev/bus/usb:/dev/bus/usb
+        privileged: true
         environment:
             - DISPLAY=unix${DISPLAY}
         depends_on:

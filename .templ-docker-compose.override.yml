@@ -14,6 +14,21 @@ services:
             static_network:
                 ipv4_address: 172.20.128.20
     
+    devcode-p:
+        image: duartej/eudaqv1-ubuntu:eutelescope
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - type: bind
+              source: @CODEDIR
+              target: /eudaq/eudaq
+            - /dev/bus/usb:/dev/bus/usb
+        privileged: true
+        environment:
+            - DISPLAY=unix${DISPLAY}
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.20
+    
     runControl:
         volumes:
             - type: bind
