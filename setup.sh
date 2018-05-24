@@ -51,11 +51,8 @@ then
     echo "Remove it if you want to re-clone it"
 else
     # Change to the v1.7
-    #echo "Switch to v1.7.0"
-    #git checkout tags/v1.7.0 -b v1.7.0
-    # Better to switch to the 1.7-dev (contains bug fixes)
     echo "Switch to v1.7-dev"
-    git checkout v1.7-dev
+    cd ${CODEDIR} && git checkout v1.7-dev
     echo "======================================================="
     echo "If this is for developing purposes, it is convenient to"
     echo "fork the https://github.com/eudaq/eudaq.git into your  "
@@ -66,10 +63,8 @@ else
     echo "4.   git pull upstream" 
     echo "======================================================="
     # Copying files for the TLU 
-    tar xvz ${DOCKERDIR}/ZestSC1.tar.gz 
-    cp -r ZestSC1 ${CODEDIR}/extern && rm -rf ZestSC1
-    tar xvz ${DOCKERDIR}/tlufirmware.tar.gz 
-    cp -r ${DOCKERDIR}/tlufirmware ${CODEDIR}/extern && rm -rf tlufirmware
+    tar xzf ${DOCKERDIR}/ZestSC1.tar.gz -C ${CODEDIR}/extern 
+    tar xzf ${DOCKERDIR}/tlufirmware.tar.gz -C ${CODEDIR}/extern
 fi
 
 # 3. Fill the place-holders of the .templ-Dockerfile 
