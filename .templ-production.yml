@@ -10,6 +10,7 @@ services:
         depends_on:
             - "runControl"
             - "logger"
+            - "dataCollector"
         networks:
             static_network:
                 ipv4_address: 172.20.128.6
@@ -27,6 +28,8 @@ services:
             - DISPLAY=unix${DISPLAY}
         depends_on:
             - "runControl"
+            - "logger"
+            - "dataCollector"
         networks:
             static_network:
                 ipv4_address: 172.20.128.7

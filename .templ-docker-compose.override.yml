@@ -52,6 +52,29 @@ services:
               source: @CODEDIR
               target: /eudaq/eudaq
     
+    TLU:
+        image: duartej/eudaqv1-ubuntu:eutelescope
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /dev/bus/usb:/dev/bus/usb
+            - type: bind
+              source: @CODEDIR
+              target: /eudaq/eudaq
+        privileged: true
+        environment:
+            - DISPLAY=unix${DISPLAY}
+        depends_on:
+            - "runControl"
+            - "logger"
+            - "dataCollector"
+            - "onlineMon"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.7
+        entrypoint: 
+            - initialize_service.sh
+            - TLU
+    
     TestProducer:
         image: duartej/eudaqv1-ubuntu:eutelescope
         volumes:
