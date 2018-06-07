@@ -100,15 +100,19 @@ ENV PATH="${PATH}:${MARLIN}/bin:${MILLEPEDEII}:${EUTELESCOPE}/bin:${GEAR}/tools:
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${EUTELESCOPE}/lib:${GEAR}/lib:${GBL}/lib"
 
 COPY release-standalone-tuned.cfg ${ILCSOFT}/release-standalone-tuned.cfg
+#  XXX -- PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+COPY CMakeLists_eutelescope.txt ${ILCSOFT}/CMakeLists_eutelescope.txt
+COPY eutelescope.py ${ILCSOFT}/eutelescope_patched.py
+#  XXX -- END PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
 
 # ILCSOFT compilation
 RUN mkdir -p ${ILCSOFT} \
   && git clone -b dev-base https://github.com/eutelescope/ilcinstall $ILCSOFT/ilcinstall \
   && cd ${ILCSOFT}/ilcinstall \
-  && ${ILCSOFT}/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg \ 
-  && mkdir -p ${EUTELESCOPE}/build && cd ${EUTELESCOPE}/build \ 
-  && cmake .. \ 
-  && make -j4 install 
+  #  XXX -- PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+  && cp ${ILCSOFT}/eutelescope_patched.py ${ILCSOFT}/ilcinstall/ilcsoft/eutelescope.py \
+  #  XXX -- END PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+  && ${ILCSOFT}/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg 
 # ILCSOFT (for EUTelescope) and LCIO: DONE ===================
 
 # Recompile eudaq with lcio and eutelescope
