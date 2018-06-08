@@ -7,7 +7,7 @@
 #
 ##################################################
  
-import shutil
+import fileinput
 # custom imports
 from marlinpkg import MarlinPKG
 from util import *
@@ -58,8 +58,12 @@ class Eutelescope(MarlinPKG):
         # ----- BUILD EUTELESCOPE ----------------------------
         os.chdir( self.installPath+"/build" )
         
-        # PROVISONAL Fixing eutelescope error
-        shutil.copyfile( "/eudaq/ilcsoft/CMakeLists_eutelescope.txt","/eudaq/ilcsoft/v01-19-02/Eutelescope/master/CMakeLists.txt")
+        # PROVISONAL: includes kRD53A type
+        for line in fileinput.input("/eudaq/ilcsoft/v01-19-02/Eutelescope/master/eutelescope/libraries/include/EUTELESCOPE.h",inplace=True):
+            if line.find("kCMSPixel = 108") != -1:
+                line = "    kCMSPixel = 108, kRD53A = 109\n"
+            print line,
+        # PROVISONAL: includes kRD53A type
         if( self.rebuild ):
             tryunlink( "CMakeCache.txt" )
 

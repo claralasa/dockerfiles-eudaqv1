@@ -59,9 +59,13 @@ ENV PYTHONPATH /rootfr/root/lib
 # This will be used only for production!
 # For development case, the /eudaq/eudaq directory
 # is "bind" from the host computer 
-RUN git clone https://github.com/eudaq/eudaq.git \ 
+# XXX -- PROV. until merge from duartej -> eudaq
+#RUN git clone https://github.com/eudaq/eudaq.git \ 
+#  && cd eudaq \ 
+#  && git checkout tags/v1.7.0 -b v1.7.0 \ 
+RUN git clone https://github.com/duartej/eudaq.git \ 
   && cd eudaq \ 
-  && git checkout tags/v1.7.0 -b v1.7.0 \ 
+  && git checkout v1.7-dev \ 
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
   && mkdir -p /eudaq/eudaq/extern/tlufirmware
 
@@ -90,28 +94,27 @@ ENV ILCSOFT /eudaq/ilcsoft
 ENV EUTELESCOPE ${ILCSOFT}/v01-19-02/Eutelescope/master/
 ENV EUDAQ /eudaq/eudaq
 ENV ILCSOFT_CMAKE_ENV ${ILCSOFT}/v01-19-02/ILCSoft.cmake.env.sh
-ENV MILLEPEDEII ${ILCSOFT}/v01-19-02/Eutelescope/master/external/millepede2/tags/V04-03-03
-ENV MILLEPEDEII_VERSION tags/V04-03-03
+ENV MILLEPEDEII ${ILCSOFT}/v01-19-02/Eutelescope/master/external/millepede2/tags/V04-03-09
+ENV MILLEPEDEII_VERSION tags/V04-03-09
 ENV GEAR ${ILCOSFT}/v01-19-02/gear/v01-06-eutel-pre
-ENV MARLIN ${ILCSOFT}/v01-19-02/Marlin/v01-09
+ENV MARLIN ${ILCSOFT}/v01-19-02/Marlin/v01-11
 ENV MARLIN_DLL ${EUTELESCOPE}/lib/libEutelescope.so:${EUTELESCOPE}/lib/libEutelProcessors.so:${EUTELESCOPE}/lib/libEutelReaders.so:${EUDAQ}/lib/libNativeReader.so:${MARLIN_DLL}
-ENV GBL ${ILCSOFT}/v01-19-02/GBL/V02-01-02
+ENV GBL ${ILCSOFT}/v01-19-02/GBL/V02-01-03
 ENV PATH="${PATH}:${MARLIN}/bin:${MILLEPEDEII}:${EUTELESCOPE}/bin:${GEAR}/tools:${GEAR}/bin"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${EUTELESCOPE}/lib:${GEAR}/lib:${GBL}/lib"
 
 COPY release-standalone-tuned.cfg ${ILCSOFT}/release-standalone-tuned.cfg
-#  XXX -- PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
-COPY CMakeLists_eutelescope.txt ${ILCSOFT}/CMakeLists_eutelescope.txt
+#  XXX -- PROVISIONAL UNTIL EUTelescope includes new kRD53A
 COPY eutelescope.py ${ILCSOFT}/eutelescope_patched.py
-#  XXX -- END PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+#  XXX -- END PROVISIONAL UNTIL EUTelescope includes new kRD53A
 
 # ILCSOFT compilation
 RUN mkdir -p ${ILCSOFT} \
   && git clone -b dev-base https://github.com/eutelescope/ilcinstall $ILCSOFT/ilcinstall \
   && cd ${ILCSOFT}/ilcinstall \
-  #  XXX -- PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+  #  XXX -- PROVISIONAL UNTIL EUTelescope includes new kRD53A
   && cp ${ILCSOFT}/eutelescope_patched.py ${ILCSOFT}/ilcinstall/ilcsoft/eutelescope.py \
-  #  XXX -- END PROVISIONAL UNTIL FIX https://github.com/eutelescope/eutelescope/issues/429
+  #  XXX -- END PROVISIONAL UNTIL EUTelescope includes new kRD53A
   && ${ILCSOFT}/ilcinstall/ilcsoft-install -i -v ${ILCSOFT}/release-standalone-tuned.cfg 
 # ILCSOFT (for EUTelescope) and LCIO: DONE ===================
 
