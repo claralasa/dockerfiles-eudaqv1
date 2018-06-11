@@ -21,6 +21,7 @@ RUN apt-get update && apt-get -y install \
   git \ 
   cmake \ 
   libusb-dev \ 
+  libusb-1.0 \ 
   pkgconf \ 
   python \ 
   python-dev \ 
@@ -69,20 +70,33 @@ RUN git clone https://github.com/duartej/eudaq.git \
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
   && mkdir -p /eudaq/eudaq/extern/tlufirmware
 
-# COPY The needed files for the TLU
+# COPY The needed files for the TLU and pxar (CMS phase one pixel)
 COPY ZestSC1.tar.gz /eudaq/eudaq/extern/ZestSC1.tar.gz
 COPY tlufirmware.tar.gz /eudaq/eudaq/extern/tlufirmware.tar.gz
+COPY libftd2xx-x86_64-1.4.6.tgz /eudaq/eudaq/extern/libftd2xx-x86_64-1.4.6.tgz
 
 # Untar files and continue with the compilation
 RUN cd /eudaq/eudaq \ 
   && tar xzf extern/ZestSC1.tar.gz -C extern && rm extern/ZestSC1.tar.gz \
   && tar xzf extern/tlufirmware.tar.gz -C extern && rm extern/tlufirmware.tar.gz \
+  # The pxar library for CMS phase I pixel
+  && tar xzf extern/libftd2xx-x86_64-1.4.6.tgz -C extern \
+  && mv extern/release extern/libftd2xx-x86_64-1.4.6 && rm extern/libftd2xx-x86_64-1.4.6.tgz \ 
+  && cp extern/libftd2xx-x86_64-1.4.6/build/libftd2xx.* /usr/local/lib/ \
+  && chmod 0755 /usr/local/lib/libftd2xx.so.1.4.6 \
+  && ln -sf /usr/local/lib/libftd2xx.so.1.4.6 /usr/local/lib/libftd2xx.so \
+  && cp extern/libftd2xx-x86_64-1.4.6/*.h /usr/local/include/ \ 
+  && git clone https://github.com/psi46/pixel-dtb-firmware extern/pixel-dtb-firmare \ 
+  && git clone https://github.com/psi46/pxar.git extern/pxar && cd extern/pxar && git checkout production \ 
+  && mkdir -p build && cd build && cmake .. && make -j4 install && cd /eudaq/eudaq \ 
+  # End pxar library 
   && mkdir -p build \ 
   && cd build \ 
   && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON \ 
   && make -j4 install
 # STOP ONLY FOR PRODUCTION
 
+ENV PXARPATH="/eudaq/eudaq/extern/pxar"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/eudaq/eudaq/lib"
 ENV PYTHONPATH="${PYTHONPATH}:/eudaq/eudaq/lib:/eudaq/eudaq/python"
 ENV PATH="${PATH}:/rootfr/root/bin:/eudaq/eudaq/bin"
@@ -121,7 +135,7 @@ RUN mkdir -p ${ILCSOFT} \
 # Recompile eudaq with lcio and eutelescope
 RUN . ${ILCSOFT}/v01-19-02/Eutelescope/master/build_env.sh \
   && cd /eudaq/eudaq/build \ 
-  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON -DUSE_LCIO=ON -DBUILD_nreader=ON \ 
+  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON -DUSE_LCIO=ON -DBUILD_nreader=ON -DBUILD_cmspixel=ON \ 
   && make -j4 install
 
 # Create a couple of directories needed
