@@ -4,6 +4,7 @@ Creates the environment to run the EUDAQ framework. This image is based on an
 ubuntu-16.04 and contains the necessary packages to run (or develop) the EUDAQ
 framework in a real test-beam setup. In order to use LCIO and EUTelescope with
 this image, take a look at htpps://github.com/duartej/dockerfiles-eutelescope
+package.
 
 ## Installation
 Assuming ```git```, ```docker``` and ```docker-compose``` is installed on your 
