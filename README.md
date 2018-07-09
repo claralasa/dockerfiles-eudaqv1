@@ -1,15 +1,9 @@
 # EUDAQ dockerfile
 
-<<<<<<< HEAD
-EMPTY ```master``` branch.
-
-* Use [eutelescope](https://github.com/duartej/dockerfiles-eudaqv1/tree/eutelescope) branch for EUDAQv1 + LCIO + EUTelescope
-* Use [plain](https://github.com/duartej/dockerfiles-eudaqv1/tree/plain) barnch for EUDAQv1 only (no other dependencies included)
-
-=======
 Creates the environment to run the EUDAQ framework. This image is based on an 
 ubuntu-16.04 and contains the necessary packages to run (or develop) the EUDAQ
-framework in a real test-beam setup, included EUTelescope and LCIO.
+framework in a real test-beam setup. In order to use LCIO and EUTelescope with
+this image, take a look at htpps://github.com/duartej/dockerfiles-eutelescope
 
 ## Installation
 Assuming ```git```, ```docker``` and ```docker-compose``` is installed on your 
@@ -32,17 +26,17 @@ containers in ```development``` mode.
 
 2. Download the automated build from the dockerhub: 
 ```bash
-$ docker pull duartej/eudaqv1-ubuntu:eutelescope
+$ docker pull duartej/eudaqv1-ubuntu:latest
 ```
 or alternativelly you can build an image from the [Dockerfile](Dockerfile)
 ```bash
 # Using docker
-$ docker build github.com/duartej/eudaqv1-ubuntu:eutelescope
+$ docker build github.com/duartej/eudaqv1-ubuntu:latest
 # Using docker-compose within the repo directory
 $ docker-compose build eudaqv1-ubuntu
 ```
 ## Usage: production environment
-The production environment uses the [EUDAQ v1.7-dev](https://github.com/eudaq/eudaq/tree/v1.7-dev) branch. 
+The production environment uses the [EUDAQ v1.x-dev](https://github.com/eudaq/eudaq/tree/v1.x-dev) branch. 
 
 The **recommended way** to launch all needed services is with _docker-compose_ 
 You should be at the _dockerfiles-eudaqv1_ repository folder and launch:
@@ -89,7 +83,7 @@ $ docker run --rm -i \
 
 ## Usage: development environment
 The development environment uses the EUDAQ repository placed in the host computer 
-at ```$HOME/repos/eudaq```, which was previously cloned and checkout to v1.7-dev 
+at ```$HOME/repos/eudaq```, which was previously cloned and checkout to v1.x-dev 
 branch in the installation step.
 
 Analogously to the production environment, the **recommended way** to launch all
@@ -109,6 +103,5 @@ check).  The build directory in the container  is found in the ```/eudaq/eudaq/b
 ```bash
 $ docker-compose run --rm devcode
 ```
->>>>>>> eutelescope
 
 
