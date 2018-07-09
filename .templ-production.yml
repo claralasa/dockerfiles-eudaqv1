@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
     NIProducer:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
         environment:
@@ -19,7 +19,7 @@ services:
             - NIProducer
 
     TLU:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /dev/bus/usb:/dev/bus/usb

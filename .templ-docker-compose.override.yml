@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
     devcode:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -15,7 +15,7 @@ services:
                 ipv4_address: 172.20.128.20
     
     devcode-p:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -53,7 +53,7 @@ services:
               target: /eudaq/eudaq
     
     TLU:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /dev/bus/usb:/dev/bus/usb
@@ -76,7 +76,7 @@ services:
             - TLU
     
     TestProducer:
-        image: duartej/eudaqv1-ubuntu:eutelescope
+        image: duartej/eudaqv1-ubuntu:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
