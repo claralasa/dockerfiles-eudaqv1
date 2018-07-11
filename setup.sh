@@ -43,16 +43,16 @@ then
 fi
 
 echo "Cloning EUDAQ into : $(pwd)"
-git clone  https://github.com/eudaq/eudaq.git eudaq
+git clone  https://github.com/duartej/eudaq.git eudaq
 
 if [ "$?" -eq 128 ];
 then
     echo "Repository already available at '${CODEDIR}'"
     echo "Remove it if you want to re-clone it"
 else
-    # Change to the v1.7
-    echo "Switch to v1.7-dev"
-    cd ${CODEDIR} && git checkout v1.7-dev
+    # Change to the v1.x-dev
+    echo "Switch to v1.x-dev"
+    cd ${CODEDIR} && git checkout v1.x-dev
     echo "======================================================="
     echo "If this is for developing purposes, it is convenient to"
     echo "fork the https://github.com/eudaq/eudaq.git into your  "
