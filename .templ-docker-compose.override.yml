@@ -5,7 +5,7 @@ services:
         image: duartej/eutelescope:latest
         volumes:
             - type: bind
-              source: @CODEDIR_EUDAQ
+              source: @CODEDIR
               target: /eudaq/eudaq
         entrypoint: "/bin/bash -c '. /eudaq/ilcsoft/v01-19-02/Eutelescope/master/build_env.sh \
                      && mkdir -p /eudaq/eudaq/build \
