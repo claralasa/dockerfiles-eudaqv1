@@ -14,7 +14,7 @@ elif [ "X$1" == "XdataCollector" ];
 then
     sleep 6;
     # Change the uid for the data 
-    CMD="DataCollector.exe -r tcp://172.20.128.2:44000"
+    CMD="euDataCollector.exe -r tcp://172.20.128.2:44000"
 elif [ "X$1" == "XonlineMon" ];
 then
     sleep 10;
