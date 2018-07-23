@@ -8,8 +8,8 @@
 
 FROM ubuntu:16.04
 LABEL author="jorge.duarte.campderros@cern.ch" \ 
-    version="0.1-alpha" \ 
-    description="Docker image for EUDAQ framework"
+    version="1.0-e00b0c9655" \ 
+    description="Docker image for EUDAQ framework (duartej/eudaq commit)"
 
 # Place at the directory
 WORKDIR /eudaq
