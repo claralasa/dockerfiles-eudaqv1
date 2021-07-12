@@ -12,7 +12,7 @@ system (host-computer).
 
 1. Clone the docker eudaq repository and configure it
 ```bash 
-$ git clone -b eutelescope https://github.com/duartej/dockerfiles-eudaqv1
+$ git clone https://github.com/duartej/dockerfiles-eudaqv1
 $ cd dockerfiles-eudaqv1
 $ source setup.sh
 ```
