@@ -6,43 +6,56 @@
 # framework 
 #
 
-FROM ubuntu:16.04
+FROM phusion/baseimage:18.04-1.0.0
 LABEL author="jorge.duarte.campderros@cern.ch" \ 
-    version="1.0-e00b0c9655" \ 
+    version="1.0-87d561f1" \ 
     description="Docker image for EUDAQ framework (duartej/eudaq commit)"
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
 
 # Place at the directory
 WORKDIR /eudaq
 
 # Install all dependencies
-RUN apt-get update && apt-get -y install \ 
-  openssh-server \ 
-  qt5-default \ 
-  git \ 
-  cmake \ 
-  libusb-dev \ 
-  libusb-1.0 \ 
-  pkgconf \ 
-  python \ 
-  python-dev \ 
-  python-numpy \ 
-  vim \ 
-  g++ \
-  gcc \
-  gfortran \
-  binutils \
-  libxpm4 \ 
-  libxft2 \ 
-  libtiff5 \ 
-  libtbb-dev \ 
-  sudo \ 
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \ 
+  && install_clean --no-install-recommends software-properties-common \ 
+  && install_clean --no-install-recommends \ 
+   build-essential \
+   python3-dev \ 
+   python3-numpy \
+   openssh-server \ 
+   qt5-default \ 
+   wget \
+   git \ 
+   python3-click \ 
+   python3-pip \ 
+   python3-matplotlib \
+   python3-tk \
+   python3-setuptools \
+   python3-wheel \
+   cmake \ 
+   libusb-dev \ 
+   libusb-1.0 \ 
+   pkgconf \ 
+   vim \ 
+   g++ \
+   gcc \
+   gfortran \
+   binutils \
+   libxpm4 \ 
+   libxft2 \ 
+   libtiff5 \ 
+   libtbb-dev \ 
+   sudo \ 
+  && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 # ROOT 
 RUN mkdir /rootfr \ 
-  && wget https://root.cern.ch/download/root_v6.14.00.Linux-ubuntu16-x86_64-gcc5.4.tar.gz -O /rootfr/root.v6.14.00.tar.gz \ 
-  && tar -xf /rootfr/root.v6.14.00.tar.gz -C /rootfr \ 
-  && rm -rf /rootfr/root.v6.14.00.tar.gz
+  && wget https://root.cern/download/root_v6.14.06.Linux-ubuntu18-x86_64-gcc7.3.tar.gz -O /rootfr/root.v6.14.06.tar.gz \ 
+  && tar -xf /rootfr/root.v6.14.06.tar.gz -C /rootfr \ 
+  && rm -rf /rootfr/root.v6.14.06.tar.gz
 
 ENV ROOTSYS /rootfr/root
 # BE aware of the ROOT libraries
@@ -53,7 +66,6 @@ ENV PYTHONPATH /rootfr/root/lib
 # This will be used only for production!
 # For development case, the /eudaq/eudaq directory
 # is "bind" from the host computer 
-# -- XXX To be switch back to eudaq!
 RUN git clone -b v1.x-dev --single-branch https://github.com/duartej/eudaq.git \ 
   && cd eudaq \ 
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
@@ -77,7 +89,8 @@ RUN cd /eudaq/eudaq \
   && cp extern/libftd2xx-x86_64-1.4.6/*.h /usr/local/include/ \ 
   && git clone https://github.com/psi46/pixel-dtb-firmware extern/pixel-dtb-firmare \ 
   && git clone https://github.com/psi46/pxar.git extern/pxar && cd extern/pxar && git checkout production \ 
-  && mkdir -p build && cd build && cmake .. && make -j4 install && cd /eudaq/eudaq \ 
+  && mkdir -p build && cd build && cmake .. && make -j4 install \ 
+  && cd /eudaq/eudaq \ 
   # End pxar library 
   && mkdir -p build \ 
   && cd build \ 
