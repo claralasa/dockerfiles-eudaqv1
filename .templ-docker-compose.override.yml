@@ -15,7 +15,7 @@ services:
                      && make -j4 install'"
     
     devcode:
-        image: duartej/eudaqv1-ubuntu:latest
+        image: duartej/eudaqv1:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -28,7 +28,7 @@ services:
                 ipv4_address: 172.20.128.20
     
     devcode-p:
-        image: duartej/eudaqv1-ubuntu:latest
+        image: duartej/eudaqv1:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
@@ -40,7 +40,7 @@ services:
             - DISPLAY=unix${DISPLAY}
         networks:
             static_network:
-                ipv4_address: 172.20.128.20
+                ipv4_address: 172.20.128.21
     
     runControl:
         volumes:
@@ -89,7 +89,7 @@ services:
             - TLU
     
     TestProducer:
-        image: duartej/eudaqv1-ubuntu:latest
+        image: duartej/eudaqv1:latest
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind

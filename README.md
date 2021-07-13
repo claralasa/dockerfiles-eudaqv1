@@ -1,7 +1,8 @@
 # EUDAQ dockerfile
 
 Creates the environment to run the EUDAQ framework. This image is based on an 
-ubuntu-16.04 and contains the necessary packages to run (or develop) the EUDAQ
+[phusion/baseimage](https://hub.docker.com/r/phusion/baseimage) built over a 
+ubuntu-18.04, and contains the necessary packages to run (or develop) the EUDAQ
 framework in a real test-beam setup. In order to use LCIO and EUTelescope with
 this image, take a look at [dockerfiles-eutelescope](https://github.com/duartej/dockerfiles-eutelescope)
 package.
@@ -27,14 +28,14 @@ containers in ```development``` mode.
 
 2. Download the automated build from the dockerhub: 
 ```bash
-$ docker pull duartej/eudaqv1-ubuntu:latest
+$ docker pull duartej/eudaqv1:latest
 ```
 or alternativelly you can build an image from the [Dockerfile](Dockerfile)
 ```bash
 # Using docker
-$ docker build github.com/duartej/eudaqv1-ubuntu:latest
+$ docker build github.com/duartej/eudaqv1:latest
 # Using docker-compose within the repo directory
-$ docker-compose build eudaqv1-ubuntu
+$ docker-compose build eudaqv1
 ```
 ## Usage: production environment
 The production environment uses the [EUDAQ v1.x-dev](https://github.com/eudaq/eudaq/tree/v1.x-dev) branch. 
@@ -65,7 +66,7 @@ could be:
  * ```TLU```
 
 If you want to add other element of the framework, just create a container using 
-the ```duartej/eudaqv1-ubuntu``` image. Be sure you connect the service to the 
+the ```duartej/eudaqv1``` image. Be sure you connect the service to the 
 ```<foldername>_static_network``` (check your available networks ```docker network
 ls```); and assign an unused ip:
 ```bash
@@ -74,7 +75,7 @@ $ docker run --rm -i \
     -e DISPLAY=unix${DISPLAY} \
     --network <foldername>_static_network \
     --ip 172.20.168.XX \
-    duartej/eudaqv1-ubuntu
+    duartej/eudaqv1
 # Once inside the container, lauch the process you are 
 # interested, and remember to connect (if needed) to run control
 # at tcp://172.20.168.2
