@@ -5,7 +5,7 @@
 echo "Initializing SERVICE: $1"
 if [ "X$1" == "XrunControl" ];
 then
-    CMD="euRun.exe -a tcp://44000"
+    CMD="euRun.exe -a tcp://:44000"
 elif [ "X$1" == "Xlogger" ];
 then
     sleep 3;
@@ -26,7 +26,7 @@ then
 elif [ "X$1" == "XNIProducer" ];
 then
     sleep 20;
-    CMD="echo 'NOT IMPLEMENTED YET: NIProducer.exe -r tcp://172.20.128.2:44000'";
+    CMD="NIProducer.exe -r tcp://172.20.128.2:44000'";
 elif [ "X$1" == "XTLU" ];
 then
     # Deal with the permissions for the TLU
