@@ -6,10 +6,10 @@
 # framework 
 #
 
-FROM phusion/baseimage:18.04-1.0.0
+FROM phusion/baseimage:focal-1.1.0
 LABEL author="jorge.duarte.campderros@cern.ch" \ 
     version="1.0-87d561f1" \ 
-    description="Docker image for EUDAQ framework (duartej/eudaq commit)"
+    description="Docker image for EUDAQ framework with PH2_ACF incorporated (duartej/eudaq commit)"
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -53,20 +53,31 @@ RUN apt-get update \
 
 # ROOT 
 RUN mkdir /rootfr \ 
-  && wget https://root.cern/download/root_v6.14.06.Linux-ubuntu18-x86_64-gcc7.3.tar.gz -O /rootfr/root.v6.14.06.tar.gz \ 
-  && tar -xf /rootfr/root.v6.14.06.tar.gz -C /rootfr \ 
-  && rm -rf /rootfr/root.v6.14.06.tar.gz
+  && wget https://root.cern/download/root_v6.24.06.Linux-ubuntu20-x86_64-gcc9.3.tar.gz -O /rootfr/root.v6.24.06.tar.gz \ 
+  && tar -xf /rootfr/root.v6.24.06.tar.gz -C /rootfr \ 
+  && rm -rf /rootfr/root.v6.24.06.tar.gz
 
 ENV ROOTSYS /rootfr/root
 # BE aware of the ROOT libraries
 ENV LD_LIBRARY_PATH /rootfr/root/lib
 ENV PYTHONPATH /rootfr/root/lib
 
+# download and compile BOOST dependency
+RUN mkdir -p /_prov \
+    && mkdir -p /eudaq/boost \
+    && cd /_prov \
+    && wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz \
+    && tar xzf boost_1_77_0.tar.gz \
+    && cd boost_1_77_0 \ 
+    && ./bootstrap.sh --prefix=/eudaq/boost \
+    && ./b2 install \ 
+    && rm -rf /_prov
+
 # download the code, checkout the release and compile
 # This will be used only for production!
 # For development case, the /eudaq/eudaq directory
 # is "bind" from the host computer 
-RUN git clone -b v1.x-dev --single-branch https://github.com/duartej/eudaq.git \ 
+RUN git clone -b v1.x-dev --single-branch https://gitlab.cern.ch/dinardo/eudaq-v1.git eudaq \ 
   && cd eudaq \ 
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
   && mkdir -p /eudaq/eudaq/extern/tlufirmware
@@ -81,25 +92,25 @@ RUN cd /eudaq/eudaq \
   && tar xzf extern/ZestSC1.tar.gz -C extern && rm extern/ZestSC1.tar.gz \
   && tar xzf extern/tlufirmware.tar.gz -C extern && rm extern/tlufirmware.tar.gz \
   # The pxar library for CMS phase I pixel
-  && tar xzf extern/libftd2xx-x86_64-1.4.6.tgz -C extern \
-  && mv extern/release extern/libftd2xx-x86_64-1.4.6 && rm extern/libftd2xx-x86_64-1.4.6.tgz \ 
-  && cp extern/libftd2xx-x86_64-1.4.6/build/libftd2xx.* /usr/local/lib/ \
-  && chmod 0755 /usr/local/lib/libftd2xx.so.1.4.6 \
-  && ln -sf /usr/local/lib/libftd2xx.so.1.4.6 /usr/local/lib/libftd2xx.so \
-  && cp extern/libftd2xx-x86_64-1.4.6/*.h /usr/local/include/ \ 
-  && git clone https://github.com/psi46/pixel-dtb-firmware extern/pixel-dtb-firmare \ 
-  && git clone https://github.com/psi46/pxar.git extern/pxar && cd extern/pxar && git checkout production \ 
-  && mkdir -p build && cd build && cmake .. && make -j4 install \ 
-  && cd /eudaq/eudaq \ 
+  #&& tar xzf extern/libftd2xx-x86_64-1.4.6.tgz -C extern \
+  #&& mv extern/release extern/libftd2xx-x86_64-1.4.6 && rm extern/libftd2xx-x86_64-1.4.6.tgz \ 
+  #&& cp extern/libftd2xx-x86_64-1.4.6/build/libftd2xx.* /usr/local/lib/ \
+  #&& chmod 0755 /usr/local/lib/libftd2xx.so.1.4.6 \
+  #&& ln -sf /usr/local/lib/libftd2xx.so.1.4.6 /usr/local/lib/libftd2xx.so \
+  #&& cp extern/libftd2xx-x86_64-1.4.6/*.h /usr/local/include/ \
+  #&& git clone https://github.com/psi46/pixel-dtb-firmware extern/pixel-dtb-firmare \ 
+  #&& git clone https://github.com/psi46/pxar.git extern/pxar && cd extern/pxar && git checkout production \ 
+  #&& mkdir -p build && cd build && cmake .. && make -j4 install \ 
+  #&& cd /eudaq/eudaq \ 
   # End pxar library 
   && mkdir -p build \ 
   && cd build \ 
-  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON \ 
+  && cmake .. -DBUILD_tlu=ON -DBUILD_python=ON -DBUILD_ni=ON -DBOOST_ROOT=/eudaq/boost \ 
   && make -j4 install
 # STOP ONLY FOR PRODUCTION
 
-ENV PXARPATH="/eudaq/eudaq/extern/pxar"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PXARPATH}/lib:/eudaq/eudaq/lib"
+#ENV PXARPATH="/eudaq/eudaq/extern/pxar"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PXARPATH}/lib:/eudaq/eudaq/lib:/eudaq/boost/lib"
 ENV PYTHONPATH="${PYTHONPATH}:/eudaq/eudaq/lib:/eudaq/eudaq/python"
 ENV PATH="${PATH}:/rootfr/root/bin:/eudaq/eudaq/bin"
 
