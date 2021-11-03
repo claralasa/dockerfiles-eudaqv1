@@ -37,6 +37,56 @@ $ docker build github.com/duartej/eudaqv1:latest
 # Using docker-compose within the repo directory
 $ docker-compose build eudaqv1
 ```
+## Usage in North Area 
+### Topology
+* EUDAQ-RC computer: Computer placed in the area, with a docker installation to run the eudaq services.
+                 In particular will run:
+  * Run-Control
+  * Logger
+  * Data Collector
+  * Online Monitor 
+  * NI-producer 
+* NI-Crate: National Instruments crate placed in the area, connected to the telescope sensor's MIMOSA26.
+ Runs the telescope DAQ
+* TIMEREF-daq computer: Computer placed in the area, connected to a sensor (provides reference timing) 
+and running its DAQ 
+* DUT-daq computer: Computer placed in the area, connected to the DUTs and running the DUTs' DAQ
+
+In order to allow the docker computer to be in the experimental area, and run the containers with 
+X11-forwarding needs from the hut (i.e., Run-Control, Online monitor or Logger), it is needed to 
+setup properly the X11 forwarding and its permissions. The EUDAQ-RC computer must be modified with:
+```bash
+# As superuser modify `/etc/ssh/sshd_config` with 
+X11UseLocalhost no
+# Restart ssh
+sudo service sshd restart
+```
+
+The NAT tables should be modified and the packets should be re-routed to the proper internal IP
+```
+#!/bin/bash
+
+sysctl net.ipv4.conf.all.forwarding=1
+
+iptables -t nat -A OUTPUT -d 172.20.128.2/32 -j DNAT --to-destination 192.168.5.130
+iptables -t nat -A OUTPUT -d 172.20.128.3/32 -j DNAT --to-destination 192.168.5.130
+iptables -t nat -A OUTPUT -d 172.20.128.4/32 -j DNAT --to-destination 192.168.5.130
+
+MY_INTERNAL_IP=$(ip a | grep 192.168.5. | awk -F"[ /]+" '{print $3;}')
+route add -net 172.20.128.0/24 gw $MY_INTERNAL_IP
+```
+Each time a new computer is connected into the EUDAQ-RC computer with X11-forwarding (`ssh -X`), the 
+access to the X-server must be granted. Use the script to create the proper docker configuration file
+```bash
+# Enter in the EUDAQ-RC computer
+ssh -X username@EUDAQ-RC
+# (re-)create the `aida-h6b.yaml`
+. prepare-dockerfile.sh
+
+* The `/etc/hosts`  (in STControl pc and in NI-crate)
+* The option in
+
+
 ## Usage: production environment
 The production environment uses the [EUDAQ v1.x-dev](https://github.com/eudaq/eudaq/tree/v1.x-dev) branch. 
 

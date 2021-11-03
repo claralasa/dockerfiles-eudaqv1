@@ -1,0 +1,131 @@
+version: "3.2"
+
+services:
+    eudaqv1:
+        build: .
+        image: duartej/eudaqv1:latest
+    
+    runControl:
+        image: duartej/eudaqv1:latest
+        hostname: aida-runcontrol
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /tmp/.docker.xauth:/tmp/.docker.xauth
+            - type: bind
+              source: /home/telescope/eudaq_data/conf
+              target: /conf
+        environment:
+            - DISPLAY=@DOCKERNET
+            - XAUTHORITY=/tmp/.docker.xauth
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.2
+        entrypoint: 
+            - initialize_service.sh
+            - runControl
+        ports:
+            - "44000:44000"
+        
+    
+    logger:
+        image: duartej/eudaqv1:latest
+        hostname: aida-logger
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /tmp/.docker.xauth:/tmp/.docker.xauth
+            - type: bind
+              source: /home/telescope/eudaq_data/logs
+              target: /logs
+        environment:
+            - DISPLAY=@DOCKERNET
+            - XAUTHORITY=/tmp/.docker.xauth
+        depends_on:
+            - "runControl"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.3
+        entrypoint: 
+            - initialize_service.sh
+            - logger
+        ports:
+            - "44002:44002"
+
+    dataCollector:
+        image: duartej/eudaqv1:latest
+        hostname: aida-datacollector
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /tmp/.docker.xauth:/tmp/.docker.xauth
+            - type: bind
+              source: /home/telescope/eudaq_data/data
+              target: /data
+        environment:
+            - DISPLAY=@DOCKERNET
+            - XAUTHORITY=/tmp/.docker.xauth
+        depends_on:
+            - "runControl"
+            - "logger"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.4
+        entrypoint: 
+            - initialize_service.sh
+            - dataCollector
+        ports:
+            - "44001:44001"
+
+    onlineMon:
+        image: duartej/eudaqv1:ph2-acf
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - type: bind
+              source: /home/telescope/eudaq_data/data
+              target: /data
+        environment:
+            - DISPLAY=@DOCKERNET
+            - XAUTHORITY=/tmp/.docker.xauth
+        depends_on:
+            - "runControl"
+            - "logger"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.5
+        entrypoint: 
+            - initialize_service.sh
+            - onlineMon
+    TLU:
+        image: duartej/eudaqv1:latest
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /dev/bus/usb:/dev/bus/usb
+        privileged: true
+        depends_on:
+            - "runControl"
+            - "logger"
+            - "dataCollector"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.7
+        entrypoint: 
+            - initialize_service.sh
+            - TLU
+
+    NIProducer:
+        image: duartej/eudaqv1:latest
+        depends_on:
+            - "runControl"
+            - "logger"
+            - "dataCollector"
+        networks:
+            static_network:
+                ipv4_address: 172.20.128.6
+        entrypoint: 
+            - initialize_service.sh
+            - NIProducer
+
+
+networks:
+    static_network:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
