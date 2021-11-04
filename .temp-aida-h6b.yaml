@@ -122,6 +122,7 @@ services:
         entrypoint: 
             - initialize_service.sh
             - NIProducer
+        restart: on-failure
 
 
 networks:
