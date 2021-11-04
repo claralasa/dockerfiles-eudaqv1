@@ -75,7 +75,7 @@ services:
             - "44001:44001"
 
     onlineMon:
-        image: duartej/eudaqv1:ph2-acf
+        image: duartej/eudaqv1:ph2_acf
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - type: bind
