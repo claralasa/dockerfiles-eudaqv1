@@ -25,8 +25,8 @@ then
     CMD="TestProducer.exe -r tcp://172.20.128.2:44000";
 elif [ "X$1" == "XNIProducer" ];
 then
-    sleep 20;
-    CMD="echo 'NOT IMPLEMENTED YET: NIProducer.exe -r tcp://172.20.128.2:44000'";
+    sleep 30;
+    CMD="NIProducer.exe -r tcp://172.20.128.2:44000'";
 elif [ "X$1" == "XTLU" ];
 then
     # Deal with the permissions for the TLU
@@ -48,7 +48,7 @@ then
     fi;
     # 2. Change permissions to the tlu
     ${TLUCH}
-    sleep 20;
+    sleep 30;
     CMD="TLUProducer.exe -r tcp://172.20.128.2:44000";
 fi
 
