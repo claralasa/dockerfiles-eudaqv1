@@ -16,7 +16,7 @@ then
 fi
 ## Update xauth and change to proper permissions
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | sudo xauth -f $XAUTH nmerge -
-sudo chmod 777 $XAUTHa
+sudo chmod 777 $XAUTH
 
 ## Put the proper address and  display
 POSTDISPLAY=`echo $DISPLAY | sed 's/^[^:]*\(.*\)/172.17.0.1\1/'`
