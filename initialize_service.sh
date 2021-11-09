@@ -26,7 +26,7 @@ then
 elif [ "X$1" == "XNIProducer" ];
 then
     sleep 30;
-    CMD="NiProducer.exe -r tcp://172.20.128.2:44000'";
+    CMD="NiProducer.exe -r tcp://172.20.128.2:44000";
 elif [ "X$1" == "XTLU" ];
 then
     # Deal with the permissions for the TLU
