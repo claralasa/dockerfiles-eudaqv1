@@ -60,6 +60,12 @@ setup properly the X11 forwarding and its permissions. The EUDAQ-RC computer mus
 X11UseLocalhost no
 # Restart ssh
 sudo service sshd restart
+# And then evnyatipme. ..
+XAUTH=/tmp/.docker.xauth
+sudo touch $XAUTH
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | sudo xauth -f $XAUTH nmerge -
+sudo chmod 777 $XAUTH
+DISPLAY_FTD=`echo $DISPLAY | sed 's/^[^:]*\(.*\)/172.17.0.1\1/'`
 ```
 
 The NAT tables should be modified and the packets should be re-routed to the proper internal IP
@@ -86,6 +92,22 @@ ssh -X username@EUDAQ-RC
 * The `/etc/hosts`  (in STControl pc and in NI-crate)
 * The option in
 
+In every computer with a service (producer, probably) running in it you must forward all traffic from the EUDAQ-RC
+docker network  (internal network) to the computer IP. Assuming the computer IP
+the docker one from EUDAQ-RC:
+```
+#!/bin/bash
+
+sysctl net.ipv4.conf.all.forwarding=1
+
+// -- Needed? iptables -t nat -A OUTPUT -d 172.20.128.1/32 -j DNAT --to-destination 192.168.5.130
+iptables -t nat -A OUTPUT -d 172.20.128.2/32 -j DNAT --to-destination 192.168.5.130
+iptables -t nat -A OUTPUT -d 172.20.128.3/32 -j DNAT --to-destination 192.168.5.130
+iptables -t nat -A OUTPUT -d 172.20.128.4/32 -j DNAT --to-destination 192.168.5.130
+
+MY_INTERNAL_IP=$(ip a | grep 192.168.5. | awk -F"[ /]+" '{print $3;}')
+route add -net 172.20.128.0/24 gw $MY_INTERNAL_IP
+```
 
 ## Usage: production environment
 The production environment uses the [EUDAQ v1.x-dev](https://github.com/eudaq/eudaq/tree/v1.x-dev) branch. 
