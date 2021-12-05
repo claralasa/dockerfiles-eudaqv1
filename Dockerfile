@@ -8,8 +8,8 @@
 
 FROM phusion/baseimage:focal-1.1.0
 LABEL author="jorge.duarte.campderros@cern.ch" \ 
-    version="1.0-87d561f1" \ 
-    description="Docker image for EUDAQ framework with PH2_ACF incorporated (duartej/eudaq commit)"
+    version="2.0-ph2_acf" \ 
+    description="Docker image for EUDAQ framework with PH2_ACF incorporated and c++17 support"
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
