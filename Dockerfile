@@ -51,11 +51,8 @@ RUN apt-get update \
   && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
-# ROOT 
-RUN mkdir /rootfr \ 
-  && wget https://root.cern/download/root_v6.24.06.Linux-ubuntu20-x86_64-gcc9.3.tar.gz -O /rootfr/root.v6.24.06.tar.gz \ 
-  && tar -xf /rootfr/root.v6.24.06.tar.gz -C /rootfr \ 
-  && rm -rf /rootfr/root.v6.24.06.tar.gz
+# ROOT:: MOVE TO c++-17 support. Extract from the corryvreckan
+COPY --from=gitlab-registry.cern.ch/corryvreckan/corryvreckan:latest /opt/root6  /rootfr/root
 
 ENV ROOTSYS /rootfr/root
 # BE aware of the ROOT libraries
@@ -82,6 +79,8 @@ RUN git clone -b v1.x-dev --single-branch https://gitlab.cern.ch/dinardo/eudaq-v
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
   && mkdir -p /eudaq/eudaq/extern/tlufirmware
 
+# Add support C++17
+COPY c++17-Platform.cmake /eudaq/eudaq/cmake/Platform.cmake
 # COPY The needed files for the TLU and pxar (CMS phase one pixel)
 COPY ZestSC1.tar.gz /eudaq/eudaq/extern/ZestSC1.tar.gz
 COPY tlufirmware.tar.gz /eudaq/eudaq/extern/tlufirmware.tar.gz
