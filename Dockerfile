@@ -51,7 +51,7 @@ RUN apt-get update \
   && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
-# ROOT:: MOVE TO c++-17 support. Extract from the corryvreckan
+# ROOT:: MOVE TO c++-17 support. Extract from the official corryvreckan image
 COPY --from=gitlab-registry.cern.ch/corryvreckan/corryvreckan:latest /opt/root6  /rootfr/root
 
 ENV ROOTSYS /rootfr/root
@@ -76,6 +76,7 @@ RUN mkdir -p /_prov \
 # is "bind" from the host computer 
 RUN git clone -b v1.x-dev --single-branch https://gitlab.cern.ch/dinardo/eudaq-v1.git eudaq \ 
   && cd eudaq \ 
+  && git reset --hard 0ad9df3 \
   && mkdir -p /eudaq/eudaq/extern/ZestSC1 \ 
   && mkdir -p /eudaq/eudaq/extern/tlufirmware
 
