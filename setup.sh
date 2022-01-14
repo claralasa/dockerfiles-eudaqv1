@@ -9,7 +9,7 @@
 # container. It will create in the host machine
 #  - $HOME/eudaq_data/logs -> the logs files created by the logger
 #  - $HOME/eudaq_data/data -> the raw data
-#  - $HOME/repos/eudaq     -> the cloned EUDAQ source
+#  - $HOME/repositories/eudaq     -> the cloned EUDAQ source
 #  - the docker-compose yaml files 
 # 
 # jorge.duarte.campderros@cern.ch (CERN/IFCA)
@@ -34,7 +34,7 @@ fi
 DOCKERDIR=${PWD}
 
 # 3. Download the code: XXX This can be done in the image actually
-CODEDIR=${HOME}/repos/eudaq
+CODEDIR=${HOME}/repositories/eudaq
 mkdir -p ${CODEDIR} && cd ${CODEDIR}/.. ;
 if [ "X$(command -v git)" == "X" ];
 then
